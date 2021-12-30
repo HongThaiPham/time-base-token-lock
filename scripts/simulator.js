@@ -27,7 +27,7 @@ const getContract = async () => {
 
 const main = async () => {
   [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
-  const unlockDate = dayjs().add(2, "m").unix();
+  const unlockDate = dayjs().add(4, "s").unix();
 
   const { contractTimeLockedWalletFactory, contractTokenLock } =
     await getContract();
@@ -49,8 +49,16 @@ const main = async () => {
 
   const balance = await contractTokenLock.balanceOf(wallet.address);
   console.log(`Wallet balance: ${balance}`);
+  const userBalance = await contractTokenLock.balanceOf(addr1.address);
+  console.log(`User balance: ${userBalance}`);
 
-  await wallet.connect(addr1).withdrawTokens(contractTokenLock.address);
+  setTimeout(async () => {
+    await wallet.connect(addr1).withdrawTokens(contractTokenLock.address);
+    const faterBalance = await contractTokenLock.balanceOf(wallet.address);
+    console.log(`Wallet balance: ${faterBalance}`);
+    const afterUserBalance = await contractTokenLock.balanceOf(addr1.address);
+    console.log(`User balance: ${afterUserBalance}`);
+  }, 5000);
 };
 
 main();
